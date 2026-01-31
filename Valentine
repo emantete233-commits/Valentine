@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>💘 Valentine?</title>
+  <style>
+    :root { --pink:#ff4d8d; --bg1:#ffe6ef; --bg2:#fff7fb; }
+    body{
+      margin:0; height:100vh; display:grid; place-items:center;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: radial-gradient(circle at top, var(--bg2), var(--bg1));
+      overflow:hidden;
+    }
+    .card{
+      width:min(520px, 92vw);
+      background:white; border-radius:22px;
+      padding:28px 24px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.12);
+      text-align:center;
+      position:relative;
+    }
+    h1{ margin:0 0 10px; font-size:clamp(26px, 4vw, 36px); }
+    p{ margin:0 0 18px; opacity:.8; }
+    .btns{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:12px; }
+    button{
+      border:0; padding:12px 18px; border-radius:999px;
+      font-size:16px; cursor:pointer; transition: transform .08s ease;
+      user-select:none;
+    }
+    button:active{ transform: scale(.98); }
+    #yes{ background: var(--pink); color:white; font-weight:700; }
+    #no{
+      background:#f1f1f1; color:#333; font-weight:600;
+      position:relative;
+    }
+    .hearts{
+      position:absolute; inset:-40px; pointer-events:none; overflow:hidden;
+    }
+    .heart{
+      position:absolute; font-size:22px; opacity:0; transform: translateY(0);
+      animation: floatUp 1.2s ease forwards;
+    }
+    @keyframes floatUp{
+      0%{ opacity:0; transform: translateY(10px) scale(.9); }
+      15%{ opacity:1; }
+      100%{ opacity:0; transform: translateY(-120px) scale(1.2); }
+    }
+    .msg{
+      margin-top:14px; font-weight:700; color: #b8004c; min-height:24px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card" id="card">
+    <div class="hearts" id="hearts"></div>
+    <h1>Would you be my Valentine? 💘</h1>
+    <p>Choose wisely 😄</p>
+
+    <div class="btns">
+      <button id="yes">Yes 💖</button>
+      <button id="no">No 🙃</button>
+    </div>
+
+    <div class="msg" id="msg"></div>
+  </div>
+
+  <script>
+    const noBtn = document.getElementById("no");
+    const yesBtn = document.getElementById("yes");
+    const card  = document.getElementById("card");
+    const msg   = document.getElementById("msg");
+    const hearts = document.getElementById("hearts");
+
+    // Make "No" run away (desktop + mobile)
+    function moveNoButton() {
+      const cardRect = card.getBoundingClientRect();
+      const btnRect  = noBtn.getBoundingClientRect();
+
+      // Keep it inside the card
+      const padding = 12;
+      const maxX = cardRect.width - btnRect.width - padding;
+      const maxY = cardRect.height - btnRect.height - padding;
+
+      const x = Math.max(padding, Math.floor(Math.random() * maxX));
+      const y = Math.max(padding, Math.floor(Math.random() * maxY));
+
+      noBtn.style.position = "absolute";
+      noBtn.style.left = x + "px";
+      noBtn.style.top  = y + "px";
+    }
+
+    // Desktop: when pointer gets close / hovers
+    noBtn.addEventListener("mouseenter", moveNoButton);
+    // Mobile: when they try to tap
+    noBtn.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      moveNoButton();
+    }, { passive: false });
+
+    // If they somehow click "No"
+    noBtn.addEventListener("click", moveNoButton);
+
+    function popHearts() {
+      const emojis = ["💖","💘","💝","💕","💞","💗"];
+      for (let i=0; i<14; i++){
+        const s = document.createElement("div");
+        s.className = "heart";
+        s.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+        s.style.left = Math.floor(Math.random()*100) + "%";
+        s.style.top  = (60 + Math.random()*40) + "%";
+        s.style.animationDelay = (Math.random()*0.25) + "s";
+        hearts.appendChild(s);
+        setTimeout(()=>s.remove(), 1400);
+      }
+    }
+
+    yesBtn.addEventListener("click", () => {
+      msg.textContent = "YAYYY!! 💞 I love you!!";
+      popHearts();
+      // Optional: disable the No button after Yes
+      noBtn.disabled = true;
+      noBtn.style.opacity = 0.5;
+      noBtn.style.cursor = "not-allowed";
+    });
+  </script>
+</body>
+</html>
